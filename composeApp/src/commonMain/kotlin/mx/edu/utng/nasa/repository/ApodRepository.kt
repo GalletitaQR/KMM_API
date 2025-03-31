@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.json.Json
 import mx.edu.utng.nasa.models.ApodItem
+import kotlinx.datetime.*
 
 class ApodRepository {
     private val apiKey = "e0ZFnxcaspLvm3qpiTLMdWjB85q0fNYg5f8dwuw2"
@@ -40,17 +41,37 @@ class ApodRepository {
 
     suspend fun fetchLastNDays(count: Int = 20) {
         try {
-            println("Iniciando solicitud a la API de APOD...")
+            println("Iniciando solicitud a la API de APOD para los últimos $count días...")
 
-            val response = client.get("$baseUrl?api_key=$apiKey&count=$count")
+            // Calcular fechas usando kotlinx-datetime
+            val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+            val startDate = today.minus(count - 1, DateTimeUnit.DAY)
+
+            // Formatear fechas en formato YYYY-MM-DD
+            val endDateStr = today.toString()
+            val startDateStr = startDate.toString()
+
+            val url = "$baseUrl?api_key=$apiKey&start_date=$startDateStr&end_date=$endDateStr"
+            println("URL de solicitud: $url")
+
+            val response = client.get(url)
             val responseText = response.bodyAsText()
 
             println("Respuesta API sin procesar: $responseText")
 
             // Corrección en la sintaxis de decodeFromString
             val itemsList = json.decodeFromString(kotlinx.serialization.builtins.ListSerializer(ApodItem.serializer()), responseText)
-            println("Respuesta recibida exitosamente con ${itemsList.size} elementos")
-            _apodItems.value = itemsList
+
+            // Ordenar los elementos por fecha (más reciente primero)
+            val sortedItems = itemsList.sortedByDescending { it.date }
+            println("Respuesta recibida exitosamente con ${sortedItems.size} elementos")
+
+            // Verificar los tipos de media
+            sortedItems.forEach { item ->
+                println("Elemento: ${item.date}, Tipo: ${item.mediaType}")
+            }
+
+            _apodItems.value = sortedItems
         } catch (e: Exception) {
             println("Error fetching APOD data: ${e.message}")
             e.printStackTrace()

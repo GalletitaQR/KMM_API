@@ -87,6 +87,9 @@ kotlin {
             //plign de logging
             // En commonMain
             implementation("io.ktor:ktor-client-logging:2.3.0")
+
+            //Tiempo Hora
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
         }
 
         iosMain.dependencies {
