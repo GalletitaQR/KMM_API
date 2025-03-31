@@ -95,6 +95,7 @@ fun ApodListScreen(
     items: List<ApodItem>,
     onItemSelected: (ApodItem) -> Unit
 ) {
+
     Scaffold(
         topBar = {
             TopAppBar(
