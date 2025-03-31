@@ -2,6 +2,7 @@
 package mx.edu.utng.nasa.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,9 +12,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import mx.edu.utng.nasa.models.ApodItem
@@ -138,10 +141,22 @@ fun ApodListItem(apod: ApodItem, onClick: () -> Unit) {
                     modifier = Modifier
                         .width(120.dp)
                         .fillMaxHeight()
-                        .padding(8.dp),
+                        .background(Color.Black),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Video")
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,  // Necesitas importar este icono
+                            contentDescription = "Video",
+                            tint = Color.White,
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Text(
+                            "Video",
+                            color = Color.White,
+                            style = MaterialTheme.typography.caption
+                        )
+                    }
                 }
             }
 
@@ -216,15 +231,12 @@ fun ApodDetailScreen(
                     onFailure = { Text("Error al cargar la imagen") }
                 )
             } else {
-                // Aquí podrías implementar un reproductor para videos
-                Box(
+                VideoPlayer(
+                    url = apod.url!!,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(300.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("Contenido de tipo: ${apod.mediaType}")
-                }
+                        .height(300.dp)
+                )
             }
 
             // Información detallada

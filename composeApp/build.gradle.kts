@@ -57,6 +57,9 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation("io.ktor:ktor-client-android:2.3.0")
+            //Reproductor de video
+            implementation("com.google.android.exoplayer:exoplayer:2.18.7")
+            implementation("com.google.android.exoplayer:exoplayer-ui:2.18.7")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
